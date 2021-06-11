@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_house_black_silhouette_without_door"
+        android:title="首頁" />
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/ic_calculator"
+        android:title="計算" />
+
+    <item
+        android:id="@+id/navigation_SQL"
+        android:icon="@drawable/ic_file_cabinet"
+        android:title="紀錄" />
+
+</menu>
