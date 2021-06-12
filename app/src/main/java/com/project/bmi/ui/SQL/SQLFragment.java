@@ -1,5 +1,6 @@
 package com.project.bmi.ui.SQL;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -7,16 +8,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.project.bmi.BMIAdapter;
 import com.project.bmi.R;
 import com.project.bmi.SqlDataBaseHelper;
 import com.project.bmi.databinding.FragmentSqlBinding;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class SQLFragment extends Fragment {
 
@@ -29,6 +40,7 @@ public class SQLFragment extends Fragment {
     private Long[] time;
     private Double[] BMI;
     private String[] status;
+    private RecyclerView rec_view;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -37,7 +49,7 @@ public class SQLFragment extends Fragment {
         View root = binding.getRoot();
 
         initView();
-        Log.d("DEBUG",time[0].toString());
+//        Log.d("DEBUG","time="+time[0].toString()+" Bmi="+BMI[0]+" status="+status[0]);
         return root;
     }
 
@@ -49,16 +61,20 @@ public class SQLFragment extends Fragment {
         binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 sqlDataBaseHelper.clearData(db);
             }
         });
-        setRecycler();
+        int count=getSQLData();
+        ArrayList<String> log=DataCombination(count);
+        setListView(log);
 
     }
 
-    private void getSQLData(){
+    private int getSQLData(){
+        Cursor c=null;
         try {
-            Cursor c = db.rawQuery("SELECT * FROM " + DataBaseTable,null);
+            c = db.rawQuery("SELECT * FROM " + DataBaseTable,null);
 
             time = new Long[c.getCount()];
             BMI = new Double[c.getCount()];
@@ -73,18 +89,30 @@ public class SQLFragment extends Fragment {
 
         }catch (Exception e){
             Log.d("DEBUG",e.getMessage());
+        }finally {
+            assert c != null;
+            return c.getCount();
         }
     }
 
-    private void setRecycler(){
-        getSQLData();
-        RecyclerView rec_view=binding.BmiRecycle;
-        RecyclerView.Adapter adapter=new BMIAdapter();
-        rec_view.setAdapter(adapter);
-        BMIAdapter.time=this.time;
-        BMIAdapter.BMI=this.BMI;
-        BMIAdapter.status=this.status;
-        rec_view.setLayoutManager(new LinearLayoutManager(this.getContext(),LinearLayoutManager.VERTICAL,false));
+    private void setListView(ArrayList<String> data){
+        ListAdapter adapter=new ArrayAdapter<String>(this.getActivity(),android.R.layout.simple_list_item_1,data);
+        binding.listView.setAdapter(adapter);
+    }
+
+    private ArrayList<String> DataCombination(int count){
+        ArrayList<String> result=new ArrayList<String>();
+        for(int i=0;i<count;i++){
+            result.add("日期:"+timeFormat(i)+"   BMI:"+String.format("%,.2f", BMI[i])+"   狀態:"+status[i]);
+        }
+        return result;
+    }
+
+    private String timeFormat(int pos){
+        Calendar c=Calendar.getInstance();
+        c.setTimeInMillis(time[pos]);
+
+        return c.get(Calendar.YEAR)+"/"+c.get(Calendar.MONTH)+"/"+c.get(Calendar.DAY_OF_MONTH);
     }
 
     @Override
