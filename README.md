@@ -5,4 +5,4 @@ SimpleBMITracker is a lightweight mobile app written in Java for recording and t
 
 | Main Page | Calculator | Record |
 |-----------|-------------|--------|
-| <img src="images/mainpage.png" alt="Main Page" width="300"> | <img src="images/calculator.png" alt="Calculator" width="300"> | <img src="images/record.png" alt="Record" width="300"> |
+| <img src="images/mainpage.png" alt="Main Page" width="250"> | <img src="images/calculator.png" alt="Calculator" width="250"> | <img src="images/record.png" alt="Record" width="250"> |
